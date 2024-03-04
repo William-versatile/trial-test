@@ -1,8 +1,37 @@
 import Head from "next/head";
 // import Link from "next/link";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useEffect } from "react";
+import { supabase } from "api";
 
 export default function Home() {
+  const addNewPosts = async ()=> {
+    try {
+      const { data, error } = await supabase
+        .from('User')
+        .insert([
+          {
+            id : "123456",
+            name: "Hello World",
+            email: "My first post.com",
+            emailVerified : null,
+            image: "i.img"
+          }
+        ])
+      
+        if(error) throw error
+
+        if(data) {
+          console.log(data);
+        }
+    } catch (error) {
+      console.log("add error", error);
+    }
+  }
+ 
+  useEffect(() => {
+    void addNewPosts()
+  }, [])
   return (
     <>
       <Head>

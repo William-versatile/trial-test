@@ -56,6 +56,8 @@ const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { locale } = useRouter() as { locale: Locale };
+
+  
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
