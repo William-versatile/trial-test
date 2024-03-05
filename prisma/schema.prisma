@@ -15,25 +15,32 @@ datasource db {
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
-//Layout Table
+//Layout Schema
 model Layouts {
-  id          String @id @default(cuid())
-  name        String
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
+  id             String           @id @default(cuid())
+  name           String           @unique
+  createdBy      User             @relation(fields: [createdById], references: [id])
+  createdById    String
+  Layout_Widgets Layout_Widgets[]
 }
 
-model Post {
-  id          Int      @id @default(autoincrement())
-  name        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String
+//Widget schema
+model Widgets {
+  id             String           @id @default(cuid())
+  name           String           @unique
+  description    String
+  Layout_Widgets Layout_Widgets[]
+}
 
-  @@index([name])
+model Layout_Widgets {
+  layoutId     String
+  widgetId     String
+  widgetConfig String?
+
+  layout Layouts @relation(fields: [layoutId], references: [id])
+  widget Widgets @relation(fields: [widgetId], references: [id])
+
+  @@id([layoutId, widgetId])
 }
 
 // Necessary for Next auth
@@ -65,14 +72,15 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
+  name          String
+  email         String    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  posts         Post[]
   Layouts       Layouts[]
+
+  @@index([email])
 }
 
 model VerificationToken {
